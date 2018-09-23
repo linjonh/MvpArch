@@ -1,7 +1,7 @@
 # MVP Architecture lib for android
 [ ![Download](https://api.bintray.com/packages/jaysen/Android-MVP-Arch/jaylin-mvparch/images/download.svg) ](https://bintray.com/jaysen/Android-MVP-Arch/jaylin-mvparch/_latestVersion)
 
-[TOC]
+[toc]
 
 ### MVP arch
 - BasePresenter
