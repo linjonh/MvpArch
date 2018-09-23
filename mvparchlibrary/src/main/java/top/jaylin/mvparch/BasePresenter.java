@@ -15,7 +15,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
 
-
+    /**
+     *add a disposable to disposables list to release them when activity or fragment is not available
+     * @param disposable the disposable tobe release later
+     */
     public void addDisposables(Disposable disposable) {
         this.disposables.add(disposable);
     }
@@ -24,11 +27,18 @@ public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
 
     private WeakReference<MvpView> mvpViewRef;
 
-
+    /**
+     *
+     * @param mvpView the implementation of interface of mvpView
+     */
     public BasePresenter(@NonNull MvpView mvpView) {
         this.mvpViewRef = new WeakReference<>(mvpView);
     }
 
+    /**
+     *
+     * @return Mvp VIEW
+     */
     public MvpView getMvpView() {
         if (mvpViewRef != null) {
             return mvpViewRef.get();
@@ -36,6 +46,11 @@ public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
         return null;
     }
 
+    /**
+     *
+     * @param isReload whether reload or not
+     * @param param assigned object params arrays handled by {@link #execution(Object...)}
+     */
     public void loadData(final boolean isReload, final Object... param) {
         getMvpView().showLoadingView();
         final Disposable disposable = Observable
@@ -78,8 +93,8 @@ public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
     /**
      * 在loadData()方法里执行的后台任务具体实现
      *
-     * @param params
-     * @return
+     * @param params passed from {@link #loadData(boolean, Object...) object params}
+     * @return generic DATA types
      */
     abstract protected DATA execution(Object... params);
 
