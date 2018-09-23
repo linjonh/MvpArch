@@ -12,7 +12,7 @@ toc
     }
 
     //ExampleP.java
-    public class ExampleP entends BasePresenter<ExampleData,ExampleMvpView>{
+    public class ExampleP extends BasePresenter<ExampleData,ExampleMvpView>{
         public ExampleP(@NonNull MainMvpView mvpView) {
             super(mvpView);
         }
@@ -28,7 +28,7 @@ toc
       }
 
       //MainActivity.java
-      public class MainActivity entends AppCompatActivity implement ExampleMvpView{
+      public class MainActivity entends AppCompatActivity implements ExampleMvpView{
 
           public void onDataLoadSuccess(DATA dataSet, boolean isReload){
             //do something
