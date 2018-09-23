@@ -1,1 +1,2 @@
-include ':mvparchlibrary', ':example'
+include ':mvparchlibrary'
+include ':example'
