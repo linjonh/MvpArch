@@ -1,5 +1,9 @@
 package top.jaylin.mvparch;
 
+/**
+ * @param <DATA> generic data type
+ * @author jaysen.lin@foxmail.com
+ */
 public interface BaseMvpView<DATA> {
     /**
      * called when data load success

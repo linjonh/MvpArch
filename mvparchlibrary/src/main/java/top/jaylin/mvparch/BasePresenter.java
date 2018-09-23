@@ -13,10 +13,16 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * @param <DATA>    generic dat
+ * @param <MvpView> the implementation of {@link BaseMvpView}
+ * @author jaysen.lin@foxmail.com
+ */
 public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
 
     /**
-     *add a disposable to disposables list to release them when activity or fragment is not available
+     * add a disposable to disposables list to release them when activity or fragment is not available
+     *
      * @param disposable the disposable tobe release later
      */
     public void addDisposables(Disposable disposable) {
@@ -28,7 +34,6 @@ public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
     private WeakReference<MvpView> mvpViewRef;
 
     /**
-     *
      * @param mvpView the implementation of interface of mvpView
      */
     public BasePresenter(@NonNull MvpView mvpView) {
@@ -36,7 +41,6 @@ public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
     }
 
     /**
-     *
      * @return Mvp VIEW
      */
     public MvpView getMvpView() {
@@ -47,9 +51,8 @@ public abstract class BasePresenter<DATA, MvpView extends BaseMvpView<DATA>> {
     }
 
     /**
-     *
      * @param isReload whether reload or not
-     * @param param assigned object params arrays handled by {@link #execution(Object...)}
+     * @param param    assigned object params arrays handled by {@link #execution(Object...)}
      */
     public void loadData(final boolean isReload, final Object... param) {
         getMvpView().showLoadingView();
