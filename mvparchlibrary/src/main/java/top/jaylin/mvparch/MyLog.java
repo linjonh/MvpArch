@@ -1,7 +1,8 @@
 package top.jaylin.mvparch;
 
-import android.text.TextUtils;
 import android.util.Log;
+
+import java.util.Locale;
 
 
 /**
@@ -57,9 +58,9 @@ public class MyLog {
         if (!debug) {
             return;
         }
-        String msg        = o + "";
         String threadName = Thread.currentThread().getName();
-        String tag        = getTag(getCallerStackTraceElement(index)) + ":" + threadName;
+        String tag = tagPrefix;
+        String msg = getTag(getCallerStackTraceElement(index)) + ":" + threadName + ": " + o;
         switch (type) {
             case "i":
                 Log.i(tag, msg);
@@ -79,14 +80,13 @@ public class MyLog {
 
     private static String getTag(StackTraceElement element) {
         try {
-            String tag             = "%s.%s(Line:%d)"; // format pattern
+            String tag = "%s.%s(Line:%d)"; // format pattern
             String callerClazzName = element.getClassName(); // obtain class name
             callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1);
-            tag = String.format(tag, callerClazzName, element.getMethodName(), element.getLineNumber()); // format
-            tag = TextUtils.isEmpty(tagPrefix) ? tag : tagPrefix + ":" + tag;
+            tag = String.format(Locale.getDefault(), tag, callerClazzName, element.getMethodName(), element.getLineNumber()); // format
             return tag;
         } catch (Exception e) {
-            return tagPrefix;
+            return "format msg log error";
         }
     }
 

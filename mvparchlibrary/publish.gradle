@@ -3,6 +3,7 @@ apply plugin: 'com.jfrog.bintray'
 //apply plugin: 'java'//
 apply plugin: 'maven-publish'// maven publish method  to create groups of artifacts
 //The bintray plugin supports three methods to create groups of artifacts: Configurations, Publications and Copying specific files using filesSpec.
+apply plugin: 'signing'
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -22,6 +23,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives javadocJar
     archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
 }
 
 bintray {
@@ -49,7 +54,20 @@ bintray {
             released = new Date()
             vcsTag = android.defaultConfig.versionName
             attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+            //Optional configuration for GPG signing
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = gpgpass_phase //Optional. The passphrase for GPG signing'
+            }
+            //Optional configuration for Maven Central sync of the version
+            mavenCentralSync {
+                sync = true //[Default: true] Determines whether to sync the version to Maven Central.
+                user = sonatype_user //OSS user token: mandatory
+                password = sonatype_pwd //OSS user password: mandatory
+                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+            }
         }
+
     }
 }
 
@@ -81,7 +99,7 @@ publishing {
             artifact("$buildDir/outputs/aar/mvparchlibrary-release.aar")
             artifact sourcesJar
             artifact javadocJar
-            groupId 'top.jaylin.mvparch'
+            groupId 'com.github.linjonh'
             artifactId 'mvp-arch-android'
             version android.defaultConfig.versionName
             pom.withXml {

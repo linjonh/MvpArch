@@ -26,26 +26,27 @@
       public interface ExampleMvpView extends BaseMvpView<ExampleData> {
            //add other method if needed
       }
-
+    
       //MainActivity.java
       public class MainActivity entends AppCompatActivity implement ExampleMvpView{
-
+    
           public void onDataLoadSuccess(DATA dataSet, boolean isReload){
             //do something
           }
-
+    
           public void onDataLoadFailed(Throwable throwable, boolean isReload){
             //do something
           }
-
+    
           public void showLoadingView(){
              //do something
           }
           public void hideLoadingView(){
              //do something
           }
-
+    
       }
+    ```
 
 
     ```
