@@ -2,6 +2,8 @@ package top.jaylin.example;
 
 import org.junit.Test;
 
+import top.jaylin.mvparch.MyLog;
+
 import static org.junit.Assert.*;
 
 /**
@@ -13,5 +15,7 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
+        MyLog.debug=true;
+        MyLog.e("hello");
     }
 }

@@ -7,32 +7,29 @@ apply plugin: 'signing'
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+//
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    from javadoc.destinationDir
+//    archiveClassifier = 'javadoc'
+//}
 
 artifacts {
-    archives javadocJar
+//    archives javadocJar
     archives sourcesJar
 }
 
-signing {
-    sign configurations.archives
-}
 
 bintray {
     user = project.hasProperty('bintrayUser') ? bintrayUser : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? bintrayApiKey : System.getenv('BINTRAY_API_KEY')
-    logger.log(LogLevel.ERROR, "user:" + user + " key:" + key)
+    logger.log(LogLevel.ERROR, "bintray user:" + user + " key:" + key)
     publications = ['MyPublication']
     pkg {
         repo = 'Android-MVP-Arch'
@@ -61,10 +58,12 @@ bintray {
             }
             //Optional configuration for Maven Central sync of the version
             mavenCentralSync {
-                sync = true //[Default: true] Determines whether to sync the version to Maven Central.
+                sync = true
+                //[Default: true] Determines whether to sync the version to Maven Central.
                 user = sonatype_user //OSS user token: mandatory
                 password = sonatype_pwd //OSS user password: mandatory
-                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+                close = '1'
+                //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
             }
         }
 
@@ -93,37 +92,67 @@ def pomConfig = {
     }
 }
 
-publishing {
-    publications {
-        MyPublication(MavenPublication) {
-            artifact("$buildDir/outputs/aar/mvparchlibrary-release.aar")
-            artifact sourcesJar
-            artifact javadocJar
-            groupId 'com.github.linjonh'
-            artifactId 'mvp-arch-android'
-            version android.defaultConfig.versionName
-            pom.withXml {
-                def dependenciesNode = asNode().appendNode('dependencies')
-                def root = asNode()
-                root.appendNode('description', 'mvp architecture for android')
-                root.appendNode('name', 'mvp-arch-android')
-                root.appendNode('url', 'https://github.com/linjonh/MvpArch')
-                root.children().last() + pomConfig
-                // Iterate over the implementation dependencies (we don't want the test ones), adding a <dependency> node for each
-                configurations.implementation.allDependencies.each {
-                    // Ensure dependencies such as fileTree are not included.
-                    logger.log(LogLevel.ERROR,"allDependencies.each:====>"+it.toString()+"\n")
+//afterEvaluate {
+    publishing {
+        publications {
+            MyPublication(MavenPublication) {
+                artifact("$buildDir/outputs/aar/mvparchlibrary-release.aar")
+                artifact sourcesJar
+//                artifact javadocJar
+//                from components.release
+                groupId 'com.github.linjonh'
+                artifactId 'mvp-arch-android'
+                version android.defaultConfig.versionName
+//                pom {
+//                    name = 'mvp-arch-android'
+//                    description = 'mvp architecture for android'
+//                    url = 'https://github.com/linjonh/MvpArch'
+//                    licenses {
+//                        license {
+//                            name = "The Apache Software License, Version 2.0"
+//                            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+//                            distribution= "repo"
+//                        }
+//                    }
+//                    developers {
+//                        developer {
+//                            id = "linjonh"
+//                            name = "linjianyou"
+//                            email = "jaysen.lin@foxmail.com"
+//                        }
+//                    }
+//
+//                    scm {
+//                        url = "https://github.com/linjonh/MvpArch"
+//                    }
+//                }
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('name', 'mvp-arch-android')
+                    root.appendNode('description', 'mvp architecture for android')
+                    root.appendNode('url', 'https://github.com/linjonh/MvpArch')
+                    root.children().last() + pomConfig
+                    def dependenciesNode = root.appendNode('dependencies')
+                    // Iterate over the implementation dependencies (we don't want the test ones), adding a <dependency> node for each
+                    configurations.implementation.allDependencies.each {
+                        // Ensure dependencies such as fileTree are not included.
+                        logger.log(LogLevel.ERROR, "allDependencies.each:====>" + it.toString() + "\n")
 
-                    if (it.name != 'unspecified') {
-                        logger.log(LogLevel.ERROR,"allDependencies.each: !unspecified: "+it.name+"\n")
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.group)
-                        dependencyNode.appendNode('artifactId', it.name)
-                        dependencyNode.appendNode('version', it.version)
+                        if (it.name != 'unspecified') {
+                            logger.log(LogLevel.ERROR, "allDependencies.each: !unspecified: " + it.name + "\n")
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                        }
                     }
                 }
             }
 
         }
     }
+//}
+signing {
+    useGpgCmd()
+    sign configurations.archives
 }
