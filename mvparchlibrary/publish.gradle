@@ -103,6 +103,7 @@ afterEvaluate {
                 groupId 'com.github.linjonh'
                 artifactId 'mvp-arch-android'
                 version android.defaultConfig.versionName
+                logger.log(LogLevel.ERROR, "$groupId:$artifactId:$version")
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('name', 'mvp-arch-android')
@@ -142,6 +143,6 @@ afterEvaluate {
     signing {//此代码有顺序// 必须在 publishing 配置之后
         useGpgCmd()
         sign configurations.archives//此种方式是使用GPG的签名
-        logger.log(LogLevel.ERROR,"signing====")
+        logger.log(LogLevel.ERROR, "signing====")
     }
 }

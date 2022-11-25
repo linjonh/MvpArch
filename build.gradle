@@ -10,7 +10,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         //bintray: jcenter publish
@@ -35,10 +35,8 @@ task clean(type: Delete) {
 }
 
 ext {
-    buildToolVer = "28.0.2"
-    compilerSdkVer = 28
-    targetSdkVer = 28
+    compilerSdkVer = 31
+    targetSdkVer = 31
     minSdkVer = 14
-    supportLibVer = "28.0.0"
 
 }

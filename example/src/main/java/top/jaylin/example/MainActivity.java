@@ -14,7 +14,12 @@ public class MainActivity extends AppCompatActivity implements BaseMvpView<List<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MyLog.debug=true;
         MyLog.e("hello");
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (int i = 0; i < stackTrace.length; i++) {
+            MyLog.e("stackTrace:"+stackTrace[i]);
+        }
     }
 
     @Override
