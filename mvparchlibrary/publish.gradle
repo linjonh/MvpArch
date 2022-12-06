@@ -1,76 +1,27 @@
-apply plugin: 'com.jfrog.bintray'
 
-//apply plugin: 'java'//
 apply plugin: 'maven-publish'// maven publish method  to create groups of artifacts
-//The bintray plugin supports three methods to create groups of artifacts: Configurations, Publications and Copying specific files using filesSpec.
 apply plugin: 'signing'
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     archiveClassifier = 'sources'
 }
-
-//task javadoc(type: Javadoc) {
-//    source = android.sourceSets.main.java.srcDirs
-//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//}
-//
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    from javadoc.destinationDir
-//    archiveClassifier = 'javadoc'
-//}
+/**
+ * 禁止生成module.json文件
+ * 因为上传到sonatype后没有识别到AAR文件，直接识别为module了
+ */
+tasks.withType(GenerateModuleMetadata) {
+/*    There are situations where you might want to disable publication of Gradle Module Metadata:
+            the repository you are uploading to rejects the metadata file (unknown format)
+    you are using Maven or Ivy specific concepts which are not properly mapped to Gradle Module Metadata
+    In this case, disabling the publication of Gradle Module Metadata is done simply by disabling the task which generates the metadata file:*/
+    enabled = false //Disabling Gradle Module Metadata publication
+}
 
 artifacts {
 //    archives javadocJar
     archives sourcesJar
 }
-
-
-//bintray {
-//    user = project.hasProperty('bintrayUser') ? bintrayUser : System.getenv('BINTRAY_USER')
-//    key = project.hasProperty('bintrayApiKey') ? bintrayApiKey : System.getenv('BINTRAY_API_KEY')
-//    logger.log(LogLevel.ERROR, "bintray user:" + user + " key:" + key)
-//    publications = ['myReleasePublish']
-//    pkg {
-//        repo = 'Android-MVP-Arch'
-//        name = 'jaylin-mvparch'
-////        userOrg = 'bintray_user'
-//        licenses = ['Apache-2.0']
-//        websiteUrl = 'https://github.com/linjonh/MvpArch'
-//        issueTrackerUrl = 'https://github.com/linjonh/MvpArch/issues'
-//
-//        vcsUrl = 'https://github.com/linjonh/MvpArch.git'
-//        publicDownloadNumbers = true
-//
-////        githubRepo = 'linjonh/MvpArch' //Optional Github repository
-////        githubReleaseNotesFile = 'README.md' //Optional Github readme file
-//        publish = true
-//        version {
-//            name = android.defaultConfig.versionName
-//            desc = 'mvp architecture for android'
-//            released = new Date()
-//            vcsTag = android.defaultConfig.versionName
-//            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
-//            //Optional configuration for GPG signing
-//            gpg {
-//                sign = true //Determines whether to GPG sign the files. The default is false
-//                passphrase = gpgpass_phase //Optional. The passphrase for GPG signing'
-//            }
-//            //Optional configuration for Maven Central sync of the version
-//            mavenCentralSync {
-//                sync = true
-//                //[Default: true] Determines whether to sync the version to Maven Central.
-//                user = sonatype_user //OSS user token: mandatory
-//                password = sonatype_pwd //OSS user password: mandatory
-//                close = '1'
-//                //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
-//            }
-//        }
-//
-//    }
-//}
-
-// Create the pom configuration:
 def pomConfig = {
     licenses {
         license {
@@ -91,6 +42,12 @@ def pomConfig = {
         url "https://github.com/linjonh/MvpArch"
     }
 }
+/**
+ * signing 的三个必要参数
+ */
+ext["signing.keyId"] = "$gpg_keyId"
+ext["signing.password"] = "$gpgpass_phase"
+ext["signing.secretKeyRingFile"] = "$gpg_secretKeyRingFile"
 
 afterEvaluate {
     publishing {
@@ -141,8 +98,9 @@ afterEvaluate {
         }
     }
     signing {//此代码有顺序// 必须在 publishing 配置之后
-        useGpgCmd()
-        sign configurations.archives//此种方式是使用GPG的签名
+//        useGpgCmd()
+//        sign configurations.archives//此种方式是使用GPG的签名
+        sign publishing.publications
         logger.log(LogLevel.ERROR, "signing====")
     }
 }
